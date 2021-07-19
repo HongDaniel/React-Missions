@@ -1,84 +1,125 @@
 import './App.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import Todo from './Todo';
-import Insert from './Insert';
-import Delete from './Delete';
-
 <style>@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500&display=swap');</style>;
-let id = 1;
-function App() {
-    const [toDoList, setToDoList] = useState([]);
-    const [text, setText] = useState('');
-    const [count, setCount] = useState(0);
 
-    useEffect(() => {
-        console.log(toDoList);
-        let count = 0;
-        toDoList.map((el) => {
-            if (el.completed === false) {
-                count++;
+let id = 1;
+let rcount = 1;
+class App extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { toDoList: [{ id: 0, text: 'test', completed: false }] };
+    }
+
+    typed;
+    handleInput = (e) => {
+        e.preventDefault();
+        let input_text = '';
+        input_text = e.target.value;
+        this.typed = input_text;
+    };
+
+    handleSubmit = () => {
+        console.log('submit');
+        rcount++;
+        this.setState({ toDoList: this.state.toDoList.concat({ id: id, text: this.typed, completed: false }) }); // state변경 => 리렌더링?
+        console.log(this.state.toDoList);
+        id++;
+    };
+
+    done = (idx) => {
+        this.setState({
+            toDoList: this.state.toDoList.map((el) => {
+                if (el.id === idx) {
+                    return { id: el.id, text: el.text, completed: true };
+                } else {
+                    return el;
+                }
+            }),
+        });
+        rcount--;
+        console.log(this.state.toDoList);
+    };
+
+    deleteItem = (idx) => {
+        console.log(idx);
+        console.log('deleted');
+        console.log(this.state.toDoList);
+        const newList = [];
+        this.state.toDoList.map((el) => {
+            if (el.id !== idx) {
+                newList.push(el);
             }
         });
-        setToDoList(toDoList);
-        setCount(count);
-    }, [toDoList]);
-
-    const addList = () => {
-        const newItem = { id: id, text: text, completed: false };
-        // console.log(newItem);
-        id++;
-        setToDoList((toDoList) => toDoList.concat(newItem));
+        console.log(newList);
+        this.setState({ toDoList: newList });
+        rcount--;
     };
 
-    const onChange = (e) => {
-        // console.log(e.target.value);
-        setText(e.target.value);
-        // console.log('text: ' + text);
-    };
-    const deleteItem = () => {
-        toDoList.pop();
-        console.log('진입');
-        console.log(toDoList);
-    };
-
-    return (
-        <div className="App">
-            <Body>
-                <Container>
-                    <Box>
-                        <div>대기({count})</div>
-                        <List>
-                            {toDoList.map((el, idx) => {
-                                if (el.completed === false) {
-                                    return (
-                                        <El key={idx}>
-                                            <div style={{ width: '100%' }}>{el.text}</div>
-                                            <span onClick={deleteItem}>❌</span>
-                                        </El>
-                                    );
-                                }
-                            })}
-                        </List>
-                    </Box>
-                    <Box>
-                        <div>완료({toDoList.length - count})</div>
-                        <List>
-                            {toDoList.map((el, idx) => {
-                                if (el.completed === true) {
-                                    return <div key={idx}>{el.text}</div>;
-                                }
-                            })}
-                        </List>
-                    </Box>
-                    <Input>
-                        <input placeholder="새로운 일 추가" type="text" onChange={onChange}></input>
-                        <button onClick={addList}>+</button>
-                    </Input>
-                </Container>
-            </Body>
-        </div>
-    );
+    render() {
+        const toDoList = this.state.toDoList;
+        return (
+            <div className="App">
+                <Body>
+                    <Container>
+                        <Box>
+                            <div>대기({rcount})</div>
+                            <List>
+                                {toDoList.map((el, idx) => {
+                                    if (el.completed === false) {
+                                        return (
+                                            <El key={idx}>
+                                                <div
+                                                    style={{ width: '100%' }}
+                                                    onClick={() => {
+                                                        this.done(el.id);
+                                                    }}
+                                                >
+                                                    {el.text}
+                                                </div>
+                                                <span
+                                                    onClick={() => {
+                                                        this.deleteItem(el.id);
+                                                    }}
+                                                >
+                                                    ❌
+                                                </span>
+                                            </El>
+                                        );
+                                    }
+                                })}
+                            </List>
+                        </Box>
+                        <Box>
+                            <div>완료({this.state.toDoList.length - rcount})</div>
+                            <List>
+                                {toDoList.map((el, idx) => {
+                                    if (el.completed === true) {
+                                        return (
+                                            <div key={idx} style={{ textDecoration: 'line-through' }}>
+                                                {el.text}
+                                            </div>
+                                        );
+                                    }
+                                })}
+                            </List>
+                        </Box>
+                        <Input>
+                            <input ref={this.onRef} placeholder="새로운 일 추가" type="text" onChange={this.handleInput}></input>
+                            <button
+                                type="submit
+                            "
+                                onClick={this.handleSubmit}
+                            >
+                                +
+                            </button>
+                        </Input>
+                    </Container>
+                </Body>
+            </div>
+        );
+    }
 }
 
 // Styled-Components
@@ -142,6 +183,7 @@ const Input = styled.div`
         border-radius: 15px;
         font-size: 20px;
         cursor: pointer;
+        outline: 0;
     }
 `;
 const El = styled.div`
@@ -154,6 +196,9 @@ const El = styled.div`
     }
     &:hover {
         background-color: #eee;
+    }
+    & > span:hover {
+        transform: scale(1.2);
     }
 `;
 export default App;
