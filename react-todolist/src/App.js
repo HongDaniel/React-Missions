@@ -4,12 +4,12 @@ import styled from 'styled-components';
 import Todo from './Todo';
 <style>@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500&display=swap');</style>;
 
-let id = 1;
-let rcount = 1;
+let id = 0;
+let rcount = 0;
 class App extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { toDoList: [{ id: 0, text: 'test', completed: false }] };
+        this.state = { toDoList: [] }; //{ id: 0, text: 'test', completed: false }
     }
 
     typed;
