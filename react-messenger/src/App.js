@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Route, Switch } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import Mainpage from './components/Mainpage';
 import Friends from './components/Friends';
 import Chatting from './components/Chatting';

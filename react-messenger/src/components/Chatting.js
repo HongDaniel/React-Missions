@@ -82,7 +82,7 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: row;
     border: 2px solid black;
-    width: 50vw;
+    width: 550px;
     height: 90vh;
 `;
 
