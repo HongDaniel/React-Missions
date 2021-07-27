@@ -1,15 +1,22 @@
 import styled from 'styled-components';
+import React, { useEffect } from 'react';
 <style>@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500&display=swap');</style>;
 
 const ORANGE = 'https://img.techpowerup.org/200908/eun.png'; //true
 const DOSIK = 'https://img.techpowerup.org/200908/NjRiY2JjOGU5YzQz.png';
 
 const Chatbox = (props) => {
+    // 자동 스크롤 기능 구현
+    useEffect(() => {
+        let chatbox = document.getElementById('chatbox');
+        chatbox.scrollTop = chatbox.scrollHeight;
+    }, [props]);
+
     let chatLog = [];
     Object.keys(props).map((el) => chatLog.push(props[el]));
 
     return (
-        <Wrapper>
+        <Wrapper id="chatbox">
             <div style={{ paddingTop: '85px' }}></div>
             {chatLog.map((el, idx) => {
                 return (

@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import main from '../img/kakao.jpg';
 import home from '../img/home.png';
 import friends from '../img/friends.png';
 import chatting from '../img/chatting.png';
 import { withRouter } from 'react-router';
-import Msg from './MsgSender';
 import Chatbox from './Chatbox';
 
 const Chatting = (props) => {
@@ -36,21 +34,14 @@ const Chatting = (props) => {
 
     const setInput = (e) => {
         const tmp = e.target.value;
-        // console.log(tmp);
         setText(tmp);
-        console.log('text: ' + text);
     };
 
-    const setnew = () => {
-        // console.log(newmsg);
+    const setnew = (e) => {
+        e.preventDefault();
         setMsg([...msg, { user: newmsg.user, content: text }]);
+        document.getElementById('input').value = '';
     };
-
-    useEffect(() => {
-        let content = document.getElementById('content');
-        content.scrollTop = content.scrollHeight;
-        console.log('변경됨');
-    }, [msg]);
 
     return (
         <Wrapper>
@@ -69,10 +60,12 @@ const Chatting = (props) => {
                     </Online>
                 </Sender>
                 <Chatbox {...msg} />
-                <Input>
-                    <input onChange={setInput}></input>
-                    <button onClick={setnew}>전송</button>
-                </Input>
+                <form onSubmit={setnew}>
+                    <Input>
+                        <input onChange={setInput} id="input"></input>
+                        <button type="submit">전송</button>
+                    </Input>
+                </form>
             </Content>
         </Wrapper>
     );
