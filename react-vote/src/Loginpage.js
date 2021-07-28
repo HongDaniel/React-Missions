@@ -33,18 +33,22 @@ const Loginpage = (props) => {
     return (
         <form onSubmit={handdleSubmit}>
             <Wrapper>
-                <h2>Voting Site</h2>
+                <h2>
+                    <Link to={{ pathname: '/' }} style={{ textDecoration: 'none', color: 'black' }}>
+                        Voting Site
+                    </Link>
+                </h2>
                 <Login>
                     <Id>
                         <Span>
                             Email:
-                            <input name="email" onChange={handdleChange}></input>
+                            <input name="email" type="email" onChange={handdleChange}></input>
                         </Span>
                     </Id>
                     <Password>
                         <Span>
                             Password:
-                            <input name="pwd" onChange={handdleChange}></input>
+                            <input name="pwd" type="password" onChange={handdleChange}></input>
                         </Span>
                     </Password>
                     <Button>Log In</Button>
@@ -111,7 +115,7 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    & h2 {
+    & > h2 {
         margin-top: 40px;
         font-size: 80px;
     }

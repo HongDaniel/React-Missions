@@ -1,61 +1,63 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { withRouter } from 'react-router';
+import { Link } from 'react-router-dom';
 import { firestore } from './firebase';
+import Candis from './Candis';
 
 const Votingpage = (props) => {
-    const [tmp, setTmp] = useState('');
-    const [options, setOptions] = useState([]);
     var opts = [];
-
+    const [candis, setCandis] = useState([]);
+    const [checkedItem, setCheckedItem] = useState('');
+    const votes = firestore.collection('Votes');
     useEffect(() => {
-        firestore
-            .collection('Votes')
-            .get()
-            .then((e) => {
-                e.forEach((doc) => {
-                    const obj = {};
-                    obj[doc.id] = doc.data().count;
-                    opts.push(obj);
-                    //
-                });
-                console.log(opts);
+        votes.get().then((e) => {
+            e.forEach((doc) => {
+                const obj = {};
+                obj[doc.id] = doc.data().count;
+                opts.push(obj);
             });
-        console.log('1');
-        setOptions(opts);
+            setCandis(opts);
+        });
     }, []);
 
-    const haddleSubmit = () => {
-        return null;
+    const haddleSubmit = (e) => {
+        e.preventDefault();
+        console.log(checkedItem);
+        let before = 0;
+        candis.map((el) => {
+            if (Object.keys(el)[0] === checkedItem) {
+                before = Object.values(el)[0];
+            }
+        });
+        console.log('before: ' + before);
+        const after = before + 1;
+        votes
+            .doc(checkedItem)
+            .update({ count: after })
+            .then(() => window.location.reload());
     };
 
     return (
         <Wrapper>
-            {console.log('2')}
-            <h2>Voting Site</h2>
-            <Content>
-                <Title>상수 최고의 맛집은?</Title>
-                <Options onSubmit={haddleSubmit}>
-                    {console.log(options)}
-                    {/* {options.map((el, idx) => {
-                        return (
-                            <label>
-                                <input type="checkbox"></input>
-                                {el}
-                            </label>
-                        );
-                    })} */}
+            <h2>
+                <Link to={{ pathname: '/' }} style={{ textDecoration: 'none', color: 'black' }}>
+                    Voting Site
+                </Link>
+            </h2>
+            <form onSubmit={haddleSubmit}>
+                <Content>
+                    <Title>상수 최고의 맛집은?</Title>
+                    <Options onSubmit={haddleSubmit}>
+                        <Candis {...{ candis, setCheckedItem }}></Candis>
+                    </Options>
                     <Button type="submit">제출</Button>
-                </Options>
-            </Content>
+                </Content>
+            </form>
         </Wrapper>
     );
 };
 
 const Button = styled.button`
-    position: relative;
-    top: 350px;
-    left: 180px;
     background-color: #1e90ff;
     color: #fff;
     border: none;
@@ -78,8 +80,9 @@ const Title = styled.div`
     margin: 20px 0;
 `;
 
-const Options = styled.form`
+const Options = styled.div`
     width: 450px;
+    height: 400px;
 `;
 
 const Content = styled.div`
