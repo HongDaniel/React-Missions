@@ -3,7 +3,6 @@ import Loginpage from './Loginpage';
 import Signup from './Signup';
 import Votingpage from './Votingpage';
 import { Route, Switch } from 'react-router-dom';
-
 function App() {
     return (
         <div className="App">

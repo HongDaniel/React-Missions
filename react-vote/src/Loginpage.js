@@ -1,37 +1,59 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import firebase from 'firebase';
 
 const Loginpage = (props) => {
-    const [user, setUser] = useState({
-        name: 'abd',
-        id: '',
-        password: '',
-        email: '',
-    });
+    const [logIn, setlogIn] = useState({ email: '', pwd: '' });
+
+    const handdleChange = (e) => {
+        const { name, value } = e.target;
+        // console.log(name + ': ' + value);
+        setlogIn({ ...logIn, [name]: value });
+        console.log(logIn);
+    };
+
+    const handdleSubmit = (e) => {
+        e.preventDefault();
+        firebase
+            .auth()
+            .signInWithEmailAndPassword(logIn.email, logIn.pwd)
+            .then((userCredential) => {
+                // Signed in
+                var user = userCredential.user;
+                console.log('로그인 성공');
+                props.history.push('/voting-page');
+            })
+            .catch((error) => {
+                var errorCode = error.code;
+                var errorMessage = error.message;
+            });
+    };
 
     return (
-        <Wrapper>
-            <h2>Voting Site</h2>
-            <Login>
-                <Id>
-                    <Span>
-                        ID:
-                        <input></input>
-                    </Span>
-                </Id>
-                <Password>
-                    <Span>
-                        Password:
-                        <input></input>
-                    </Span>
-                </Password>
-                <Button>Log In</Button>
-                <Link to={{ pathname: '/signup' }}>
-                    <Button>Sign up</Button>
-                </Link>
-            </Login>
-        </Wrapper>
+        <form onSubmit={handdleSubmit}>
+            <Wrapper>
+                <h2>Voting Site</h2>
+                <Login>
+                    <Id>
+                        <Span>
+                            Email:
+                            <input name="email" onChange={handdleChange}></input>
+                        </Span>
+                    </Id>
+                    <Password>
+                        <Span>
+                            Password:
+                            <input name="pwd" onChange={handdleChange}></input>
+                        </Span>
+                    </Password>
+                    <Button>Log In</Button>
+                    <Link to={{ pathname: '/signup' }}>
+                        <Button type="submit">Sign up</Button>
+                    </Link>
+                </Login>
+            </Wrapper>
+        </form>
     );
 };
 
