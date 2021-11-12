@@ -26,7 +26,7 @@
 
 ## **To Do List**
 
-<img width="45%" src="ToDoList2.gif"/>
+<img width="45%" src="ToDoList.gif"/>
 
 </br> 
 </br>
